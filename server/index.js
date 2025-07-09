@@ -5,18 +5,27 @@ const mongoose = require("mongoose");
 const userRoutes = require("./routes/userRoutes");
 const app = express();
 
-const path = require("path");
 
 require("dotenv").config();
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+// For any other route, serve index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+
 
 app.use(cors());
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, "../client/build")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build/index.html"));
-});
 
 mongoose.connect(process.env.MONGO_URL)
 
